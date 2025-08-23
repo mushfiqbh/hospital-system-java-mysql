@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PackagesTest:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PackagesTest_jar</output-path>
+    <root id="archive" name="PackagesTest.jar">
+      <element id="module-output" name="PackagesTest" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/src/jdbc.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
