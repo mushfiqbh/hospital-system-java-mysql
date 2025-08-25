@@ -7,7 +7,8 @@ import java.sql.*;
 import java.util.Vector;
 
 public class PatientPanel extends CrudPanel {
-    private JTextField patientIdField, nameField, genderField, ageField, phoneField, addressField, admissionDateField;
+    private JTextField patientIdField, nameField, ageField, phoneField, addressField, admissionDateField;
+    private JComboBox<String> genderComboBox;
 
     public PatientPanel() {
         super();
@@ -42,13 +43,17 @@ public class PatientPanel extends CrudPanel {
         gbc.weightx = 1.0;
         patientIdField = new JTextField(15);
         patientIdField.setEditable(false);
+        patientIdField.setText("Auto Generated");
         formPanel.add(patientIdField, gbc);
         gbc.gridy++;
         nameField = new JTextField(15);
         formPanel.add(nameField, gbc);
         gbc.gridy++;
-        genderField = new JTextField(15);
-        formPanel.add(genderField, gbc);
+        genderComboBox = new JComboBox<>();
+        genderComboBox.addItem("Male");
+        genderComboBox.addItem("Female");
+        genderComboBox.addItem("Other");
+        formPanel.add(genderComboBox, gbc);
         gbc.gridy++;
         ageField = new JTextField(15);
         formPanel.add(ageField, gbc);
@@ -118,7 +123,7 @@ public class PatientPanel extends CrudPanel {
         try (Connection conn = DatabaseConnector.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nameField.getText().trim());
-            pstmt.setString(2, genderField.getText().trim());
+            pstmt.setString(2, genderComboBox.getSelectedItem().toString());
             pstmt.setInt(3, Integer.parseInt(ageField.getText().trim()));
             pstmt.setString(4, phoneField.getText().trim());
             pstmt.setString(5, addressField.getText().trim());
@@ -141,7 +146,7 @@ public class PatientPanel extends CrudPanel {
         try (Connection conn = DatabaseConnector.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nameField.getText().trim());
-            pstmt.setString(2, genderField.getText().trim());
+            pstmt.setString(2, genderComboBox.getSelectedItem().toString());
             pstmt.setInt(3, Integer.parseInt(ageField.getText().trim()));
             pstmt.setString(4, phoneField.getText().trim());
             pstmt.setString(5, addressField.getText().trim());
@@ -187,7 +192,7 @@ public class PatientPanel extends CrudPanel {
         if (row != -1) {
             patientIdField.setText(tableModel.getValueAt(row, 0).toString());
             nameField.setText(tableModel.getValueAt(row, 1).toString());
-            genderField.setText(tableModel.getValueAt(row, 2).toString());
+            genderComboBox.setSelectedItem(tableModel.getValueAt(row, 2).toString());
             ageField.setText(tableModel.getValueAt(row, 3).toString());
             phoneField.setText(tableModel.getValueAt(row, 4).toString());
             addressField.setText(tableModel.getValueAt(row, 5).toString());
@@ -197,9 +202,9 @@ public class PatientPanel extends CrudPanel {
 
     @Override
     protected void clearForm() {
-        patientIdField.setText("");
+        patientIdField.setText("Auto Generated");
         nameField.setText("");
-        genderField.setText("");
+        genderComboBox.setSelectedIndex(-1);
         ageField.setText("");
         phoneField.setText("");
         addressField.setText("");

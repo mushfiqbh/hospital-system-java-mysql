@@ -8,8 +8,9 @@ import java.sql.*;
 import java.util.Vector;
 
 public class BillingPanel extends CrudPanel {
-    private JTextField billIdField, totalAmountField, paymentStatusField, paymentDateField;
+    private JTextField billIdField, totalAmountField, paymentDateField;
     private JComboBox<PatientItem> patientComboBox;
+    private JComboBox<String> paymentStatusComboBox;
 
     public BillingPanel() {
         super();
@@ -57,6 +58,7 @@ public class BillingPanel extends CrudPanel {
         gbc.weightx = 1.0;
         billIdField = new JTextField(15);
         billIdField.setEditable(false);
+        billIdField.setText("Auto Generated");
         formPanel.add(billIdField, gbc);
         gbc.gridy++;
         patientComboBox = new JComboBox<>();
@@ -77,8 +79,11 @@ public class BillingPanel extends CrudPanel {
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        paymentStatusField = new JTextField(15);
-        formPanel.add(paymentStatusField, gbc);
+        paymentStatusComboBox = new JComboBox<>();
+        paymentStatusComboBox.addItem("Paid");
+        paymentStatusComboBox.addItem("Unpaid");
+        paymentStatusComboBox.addItem("Pending");
+        formPanel.add(paymentStatusComboBox, gbc);
         gbc.gridy++;
         paymentDateField = new JTextField(15);
         formPanel.add(paymentDateField, gbc);
@@ -123,7 +128,7 @@ public class BillingPanel extends CrudPanel {
 
             pstmt.setInt(1, ((PatientItem) patientComboBox.getSelectedItem()).id);
             pstmt.setDouble(2, Double.parseDouble(totalAmountField.getText().trim())); // Store as double
-            pstmt.setString(3, paymentStatusField.getText().trim());
+            pstmt.setString(3, paymentStatusComboBox.getSelectedItem().toString());
 
             String dateText = paymentDateField.getText().trim();
             if (dateText.isEmpty()) {
@@ -151,7 +156,7 @@ public class BillingPanel extends CrudPanel {
 
             pstmt.setInt(1, ((PatientItem) patientComboBox.getSelectedItem()).id);
             pstmt.setDouble(2, Double.parseDouble(totalAmountField.getText().trim()));
-            pstmt.setString(3, paymentStatusField.getText().trim());
+            pstmt.setString(3, paymentStatusComboBox.getSelectedItem().toString());
 
             String dateText = paymentDateField.getText().trim();
             if (dateText.isEmpty()) {
@@ -201,7 +206,7 @@ public class BillingPanel extends CrudPanel {
             billIdField.setText(tableModel.getValueAt(row, 0).toString());
             String patientName = tableModel.getValueAt(row, 1).toString();
             totalAmountField.setText(tableModel.getValueAt(row, 2).toString());
-            paymentStatusField.setText(tableModel.getValueAt(row, 3).toString());
+            paymentStatusComboBox.setSelectedItem(tableModel.getValueAt(row, 3).toString());
 
             Object dateValue = tableModel.getValueAt(row, 4);
             paymentDateField.setText(dateValue != null ? dateValue.toString() : "");
@@ -217,9 +222,9 @@ public class BillingPanel extends CrudPanel {
 
     @Override
     protected void clearForm() {
-        billIdField.setText("");
+        billIdField.setText("Auto Generated");
         totalAmountField.setText("");
-        paymentStatusField.setText("");
+        paymentStatusComboBox.setSelectedIndex(-1);
         paymentDateField.setText("");
         patientComboBox.setSelectedIndex(-1);
         table.clearSelection();

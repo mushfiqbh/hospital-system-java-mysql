@@ -9,9 +9,10 @@ import java.sql.*;
 import java.util.Vector;
 
 public class AppointmentPanel extends CrudPanel {
-    private JTextField appointmentIdField, appDateField, appTimeField, statusField;
+    private JTextField appointmentIdField, appDateField, appTimeField;
     private JComboBox<PatientItem> patientComboBox;
     private JComboBox<DoctorItem> doctorComboBox;
+    private JComboBox<String> statusComboBox;
 
     public AppointmentPanel() {
         super();
@@ -66,6 +67,7 @@ public class AppointmentPanel extends CrudPanel {
         gbc.weightx = 1.0;
         appointmentIdField = new JTextField(15);
         appointmentIdField.setEditable(false);
+        appointmentIdField.setText("Auto Generated");
         formPanel.add(appointmentIdField, gbc);
         gbc.gridy++;
         patientComboBox = new JComboBox<>();
@@ -94,8 +96,11 @@ public class AppointmentPanel extends CrudPanel {
         appTimeField = new JTextField(15);
         formPanel.add(appTimeField, gbc);
         gbc.gridy++;
-        statusField = new JTextField(15);
-        formPanel.add(statusField, gbc);
+        statusComboBox = new JComboBox<>();
+        statusComboBox.addItem("Scheduled");
+        statusComboBox.addItem("Completed");
+        statusComboBox.addItem("Cancelled");
+        formPanel.add(statusComboBox, gbc);
     }
 
     @Override
@@ -139,7 +144,7 @@ public class AppointmentPanel extends CrudPanel {
             pstmt.setInt(2, ((DoctorItem) doctorComboBox.getSelectedItem()).id);
             pstmt.setString(3, appDateField.getText().trim()); // Store date as TEXT
             pstmt.setString(4, appTimeField.getText().trim()); // Store time as TEXT
-            pstmt.setString(5, statusField.getText().trim());
+            pstmt.setString(5, statusComboBox.getSelectedItem().toString());
 
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Appointment added successfully.", "Success",
@@ -161,7 +166,7 @@ public class AppointmentPanel extends CrudPanel {
             pstmt.setInt(2, ((DoctorItem) doctorComboBox.getSelectedItem()).id);
             pstmt.setString(3, appDateField.getText().trim());
             pstmt.setString(4, appTimeField.getText().trim());
-            pstmt.setString(5, statusField.getText().trim());
+            pstmt.setString(5, statusComboBox.getSelectedItem().toString());
             pstmt.setInt(6, Integer.parseInt(appointmentIdField.getText().trim()));
 
             pstmt.executeUpdate();
@@ -206,7 +211,7 @@ public class AppointmentPanel extends CrudPanel {
             String doctorName = tableModel.getValueAt(row, 2).toString();
             appDateField.setText(tableModel.getValueAt(row, 3).toString());
             appTimeField.setText(tableModel.getValueAt(row, 4).toString());
-            statusField.setText(tableModel.getValueAt(row, 5).toString());
+            statusComboBox.setSelectedItem(tableModel.getValueAt(row, 5).toString());
 
             // Select the correct patient in the combo box
             for (int i = 0; i < patientComboBox.getItemCount(); i++) {
@@ -227,10 +232,10 @@ public class AppointmentPanel extends CrudPanel {
 
     @Override
     protected void clearForm() {
-        appointmentIdField.setText("");
+        appointmentIdField.setText("Auto Generated");
         appDateField.setText("");
         appTimeField.setText("");
-        statusField.setText("");
+        statusComboBox.setSelectedIndex(-1);
         patientComboBox.setSelectedIndex(-1);
         doctorComboBox.setSelectedIndex(-1);
         table.clearSelection();
