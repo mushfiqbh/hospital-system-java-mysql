@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.sql.*;
 
 public class DatabaseConnector {
-    private static final String DB_NAME = "hospital.db";
+    private static final String DB_NAME = "project_hospital.db";
     private static final String DB_URL = "jdbc:sqlite:" + DB_NAME;
 
     public static Connection getConnection() {

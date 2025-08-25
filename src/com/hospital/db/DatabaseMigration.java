@@ -12,7 +12,7 @@ import java.sql.Statement;
  */
 public class DatabaseMigration {
     public static void runMigrations() {
-        String url = "jdbc:sqlite:hospital.db";
+        String url = "jdbc:sqlite:project_hospital.db";
         try (Connection conn = DriverManager.getConnection(url);
                 Statement stmt = conn.createStatement()) {
 
