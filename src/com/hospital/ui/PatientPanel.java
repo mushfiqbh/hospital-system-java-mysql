@@ -1,15 +1,13 @@
 package com.hospital.ui;
 
 import com.hospital.db.DatabaseConnector;
-
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 import java.util.Vector;
 
 public class PatientPanel extends CrudPanel {
-    private JTextField patientIdField, nameField, ageField, phoneField, addressField, admissionDateField;
-    private JComboBox<String> genderComboBox;
+    private JTextField patientIdField, nameField, genderField, ageField, phoneField, addressField, admissionDateField;
 
     public PatientPanel() {
         super();
@@ -44,17 +42,13 @@ public class PatientPanel extends CrudPanel {
         gbc.weightx = 1.0;
         patientIdField = new JTextField(15);
         patientIdField.setEditable(false);
-        patientIdField.setText("Auto Generated");
         formPanel.add(patientIdField, gbc);
         gbc.gridy++;
         nameField = new JTextField(15);
         formPanel.add(nameField, gbc);
         gbc.gridy++;
-        genderComboBox = new JComboBox<>();
-        genderComboBox.addItem("Male");
-        genderComboBox.addItem("Female");
-        genderComboBox.addItem("Other");
-        formPanel.add(genderComboBox, gbc);
+        genderField = new JTextField(15);
+        formPanel.add(genderField, gbc);
         gbc.gridy++;
         ageField = new JTextField(15);
         formPanel.add(ageField, gbc);
@@ -124,11 +118,11 @@ public class PatientPanel extends CrudPanel {
         try (Connection conn = DatabaseConnector.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nameField.getText().trim());
-            pstmt.setString(2, genderComboBox.getSelectedItem().toString());
+            pstmt.setString(2, genderField.getText().trim());
             pstmt.setInt(3, Integer.parseInt(ageField.getText().trim()));
             pstmt.setString(4, phoneField.getText().trim());
             pstmt.setString(5, addressField.getText().trim());
-            pstmt.setDate(6, Date.valueOf(admissionDateField.getText().trim()));
+            pstmt.setString(6, admissionDateField.getText().trim()); // Store date as TEXT
 
             pstmt.executeUpdate();
             JOptionPane.showMessageDialog(this, "Patient added successfully.", "Success",
@@ -147,11 +141,11 @@ public class PatientPanel extends CrudPanel {
         try (Connection conn = DatabaseConnector.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nameField.getText().trim());
-            pstmt.setString(2, genderComboBox.getSelectedItem().toString());
+            pstmt.setString(2, genderField.getText().trim());
             pstmt.setInt(3, Integer.parseInt(ageField.getText().trim()));
             pstmt.setString(4, phoneField.getText().trim());
             pstmt.setString(5, addressField.getText().trim());
-            pstmt.setDate(6, Date.valueOf(admissionDateField.getText().trim()));
+            pstmt.setString(6, admissionDateField.getText().trim()); // Store date as TEXT
             pstmt.setInt(7, Integer.parseInt(patientIdField.getText().trim()));
 
             pstmt.executeUpdate();
@@ -193,7 +187,7 @@ public class PatientPanel extends CrudPanel {
         if (row != -1) {
             patientIdField.setText(tableModel.getValueAt(row, 0).toString());
             nameField.setText(tableModel.getValueAt(row, 1).toString());
-            genderComboBox.setSelectedItem(tableModel.getValueAt(row, 2).toString());
+            genderField.setText(tableModel.getValueAt(row, 2).toString());
             ageField.setText(tableModel.getValueAt(row, 3).toString());
             phoneField.setText(tableModel.getValueAt(row, 4).toString());
             addressField.setText(tableModel.getValueAt(row, 5).toString());
@@ -203,9 +197,9 @@ public class PatientPanel extends CrudPanel {
 
     @Override
     protected void clearForm() {
-        patientIdField.setText("Auto Generated");
+        patientIdField.setText("");
         nameField.setText("");
-        genderComboBox.setSelectedIndex(0);
+        genderField.setText("");
         ageField.setText("");
         phoneField.setText("");
         addressField.setText("");

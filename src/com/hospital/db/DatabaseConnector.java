@@ -1,29 +1,20 @@
 package com.hospital.db;
 
 import javax.swing.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
-/**
- * Handles the connection to the MySQL database.
- * Delegates helper tasks like user prompts and setup checks to DatabaseHelper.
- */
 public class DatabaseConnector {
-    private static final String DB_NAME = "project_hospital_db_m3";
-    private static String DB_USER = "root";
-    private static String DB_PASSWORD = "";
-    private static String DB_PORT = "3306";
-    private static String DB_URL = buildUrl();
-
-    private static String buildUrl() {
-        return "jdbc:mysql://localhost:" + DB_PORT + "/" + DB_NAME;
-    }
+    private static final String DB_NAME = "hospital.db";
+    private static final String DB_URL = "jdbc:sqlite:" + DB_NAME;
 
     public static Connection getConnection() {
         while (true) {
             try {
-                Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                Connection conn = DriverManager.getConnection(DB_URL);
+
+                if (!DatabaseException.allTablesExist(conn)) {
+                    throw new SQLException("Required database tables are missing.");
+                }
                 return conn;
 
             } catch (SQLException e) {
@@ -40,18 +31,18 @@ public class DatabaseConnector {
     private static void handleSQLException(SQLException e) throws SQLException {
         String message = e.getMessage().toLowerCase();
 
-        if (message.contains("unknown database")) {
-            DatabaseException.missingDatabase(DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        if (message.contains("required database tables are missing")) {
+            int migrate = JOptionPane.showConfirmDialog(null,
+                    "Database tables are missing. Create and seed them now?",
+                    "Missing Tables", JOptionPane.YES_NO_OPTION);
 
-        } else if (message.contains("communications link failure") || message.contains("connect")) {
-            DB_PORT = DatabaseException.promptForPort();
-            DB_URL = buildUrl();
-
-        } else if (message.contains("access denied") || message.contains("authentication")) {
-            throw new SQLException("Access denied. Please Fix Your Xampp and MySQL issue.");
-
+            if (migrate == JOptionPane.YES_OPTION) {
+                DatabaseMigration.runMigrations();
+            } else {
+                throw new SQLException("Required tables missing. Migration declined by user.");
+            }
         } else {
-            throw new SQLException("Unexpected error: " + e.getMessage(), e);
+            throw new SQLException("Unexpected database error: " + e.getMessage(), e);
         }
     }
 }

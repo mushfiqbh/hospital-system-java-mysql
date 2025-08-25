@@ -2,17 +2,14 @@ package com.hospital.ui;
 
 import com.hospital.db.DatabaseConnector;
 import com.hospital.model.PatientItem;
-
 import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Vector;
 
 public class BillingPanel extends CrudPanel {
-    private JTextField billIdField, totalAmountField, paymentDateField;
+    private JTextField billIdField, totalAmountField, paymentStatusField, paymentDateField;
     private JComboBox<PatientItem> patientComboBox;
-    private JComboBox<String> paymentStatusComboBox;
 
     public BillingPanel() {
         super();
@@ -60,7 +57,6 @@ public class BillingPanel extends CrudPanel {
         gbc.weightx = 1.0;
         billIdField = new JTextField(15);
         billIdField.setEditable(false);
-        billIdField.setText("Auto Generated");
         formPanel.add(billIdField, gbc);
         gbc.gridy++;
         patientComboBox = new JComboBox<>();
@@ -81,12 +77,8 @@ public class BillingPanel extends CrudPanel {
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        paymentStatusComboBox = new JComboBox<>();
-        paymentStatusComboBox.addItem("Overdue");
-        paymentStatusComboBox.addItem("Paid");
-        paymentStatusComboBox.addItem("Refunded");
-        paymentStatusComboBox.addItem("Cancelled");
-        formPanel.add(paymentStatusComboBox, gbc);
+        paymentStatusField = new JTextField(15);
+        formPanel.add(paymentStatusField, gbc);
         gbc.gridy++;
         paymentDateField = new JTextField(15);
         formPanel.add(paymentDateField, gbc);
@@ -107,9 +99,9 @@ public class BillingPanel extends CrudPanel {
                 Vector<Object> row = new Vector<>();
                 row.add(rs.getInt("bill_id"));
                 row.add(rs.getString("patient_name"));
-                row.add(rs.getBigDecimal("total_amount"));
+                row.add(rs.getDouble("total_amount")); // Read as double for REAL type
                 row.add(rs.getString("payment_status"));
-                row.add(rs.getDate("payment_date"));
+                row.add(rs.getString("payment_date")); // Read date as TEXT
                 tableModel.addRow(row);
             }
         } catch (SQLException e) {
@@ -130,14 +122,14 @@ public class BillingPanel extends CrudPanel {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, ((PatientItem) patientComboBox.getSelectedItem()).id);
-            pstmt.setBigDecimal(2, new BigDecimal(totalAmountField.getText().trim()));
-            pstmt.setString(3, paymentStatusComboBox.getSelectedItem().toString());
+            pstmt.setDouble(2, Double.parseDouble(totalAmountField.getText().trim())); // Store as double
+            pstmt.setString(3, paymentStatusField.getText().trim());
 
             String dateText = paymentDateField.getText().trim();
             if (dateText.isEmpty()) {
-                pstmt.setNull(4, Types.DATE);
+                pstmt.setNull(4, Types.VARCHAR);
             } else {
-                pstmt.setDate(4, Date.valueOf(dateText));
+                pstmt.setString(4, dateText);
             }
 
             pstmt.executeUpdate();
@@ -158,14 +150,14 @@ public class BillingPanel extends CrudPanel {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, ((PatientItem) patientComboBox.getSelectedItem()).id);
-            pstmt.setBigDecimal(2, new BigDecimal(totalAmountField.getText().trim()));
-            pstmt.setString(3, paymentStatusComboBox.getSelectedItem().toString());
+            pstmt.setDouble(2, Double.parseDouble(totalAmountField.getText().trim()));
+            pstmt.setString(3, paymentStatusField.getText().trim());
 
             String dateText = paymentDateField.getText().trim();
             if (dateText.isEmpty()) {
-                pstmt.setNull(4, Types.DATE);
+                pstmt.setNull(4, Types.VARCHAR);
             } else {
-                pstmt.setDate(4, Date.valueOf(dateText));
+                pstmt.setString(4, dateText);
             }
             pstmt.setInt(5, Integer.parseInt(billIdField.getText().trim()));
 
@@ -209,7 +201,7 @@ public class BillingPanel extends CrudPanel {
             billIdField.setText(tableModel.getValueAt(row, 0).toString());
             String patientName = tableModel.getValueAt(row, 1).toString();
             totalAmountField.setText(tableModel.getValueAt(row, 2).toString());
-            paymentStatusComboBox.setSelectedItem(tableModel.getValueAt(row, 3).toString());
+            paymentStatusField.setText(tableModel.getValueAt(row, 3).toString());
 
             Object dateValue = tableModel.getValueAt(row, 4);
             paymentDateField.setText(dateValue != null ? dateValue.toString() : "");
@@ -225,9 +217,9 @@ public class BillingPanel extends CrudPanel {
 
     @Override
     protected void clearForm() {
-        billIdField.setText("Auto Generated");
+        billIdField.setText("");
         totalAmountField.setText("");
-        paymentStatusComboBox.setSelectedIndex(0);
+        paymentStatusField.setText("");
         paymentDateField.setText("");
         patientComboBox.setSelectedIndex(-1);
         table.clearSelection();
