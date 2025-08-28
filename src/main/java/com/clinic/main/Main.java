@@ -23,7 +23,6 @@ public class Main {
         // Run the Swing GUI on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> {
             try {
-                // Set a modern look and feel
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception e) {
                 System.err.println(e.getMessage());

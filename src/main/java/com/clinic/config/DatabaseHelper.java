@@ -26,6 +26,18 @@ public class DatabaseHelper {
         return conn;
     }
 
+    public static void createTables() {
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
+            for (String sql : DatabaseQuery.getCreateTableSQLs()) {
+                stmt.execute(sql);
+            }
+            System.out.println("All tables created or already exist.");
+        } catch (SQLException e) {
+            System.err.println("Error creating tables: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static void createDefaultAdmin() {
         UserDao userDao = new UserDao();
         if (userDao.getUserByUsername("admin") == null) {
@@ -36,18 +48,6 @@ public class DatabaseHelper {
             } catch (SQLException e) {
                 System.err.println("SQL Error while creating default admin user: " + e.getMessage());
             }
-        }
-    }
-
-    public static void createTables() {
-        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
-            for (String sql : DatabaseQuery.getCreateTableSQLs()) {
-                stmt.execute(sql);
-            }
-            System.out.println("All tables created or already exist.");
-        } catch (SQLException e) {
-            System.err.println("Error creating tables: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
