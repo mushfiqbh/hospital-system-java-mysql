@@ -1,4 +1,4 @@
-package com.clinic;
+package com.clinic.main;
 
 import com.clinic.config.DatabaseHelper;
 import com.clinic.ui.LoginFrame;

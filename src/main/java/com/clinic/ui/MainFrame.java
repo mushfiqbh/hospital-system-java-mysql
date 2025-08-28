@@ -8,29 +8,28 @@ import java.awt.*;
 public class MainFrame extends JFrame {
     public MainFrame(User user) {
         setTitle("Clinic Management System");
-        setSize(900, 700);
+        setSize(1024, 768);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Top Panel with Welcome Message and Logout Button
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        topPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         JLabel welcomeLabel = new JLabel("Welcome, " + user.getName() + " (" + user.getRole() + ")");
-        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
         JButton logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
         logoutButton.addActionListener(e -> {
-            dispose(); // Close the current MainFrame
-            new LoginFrame().setVisible(true); // Open a new LoginFrame
+            dispose();
+            new LoginFrame().setVisible(true);
         });
 
         topPanel.add(welcomeLabel, BorderLayout.WEST);
         topPanel.add(logoutButton, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
-        // Center Panel with Role-Specific Dashboards
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
 

@@ -20,12 +20,13 @@ public class DoctorPanel extends JPanel {
     private User loggedInUser;
     private Doctor doctorProfile;
     private List<Appointment> appointmentList;
-
-    // Form fields
     private JTextField apptIdField = new JTextField(5);
     private JComboBox<String> statusComboBox;
     private JTextArea notesArea = new JTextArea(3, 20);
     private JTextField prescriptionField = new JTextField(10);
+
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 14);
+    private static final Font FIELD_FONT = new Font("Segoe UI", Font.PLAIN, 14);
 
     public DoctorPanel(User user) {
         this.loggedInUser = user;
@@ -33,13 +34,19 @@ public class DoctorPanel extends JPanel {
         this.doctorDao = new DoctorDao();
 
         setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        add(new JLabel("Doctor Dashboard - Welcome Dr. " + user.getName(), SwingConstants.CENTER), BorderLayout.NORTH);
+        JLabel titleLabel = new JLabel("Doctor Dashboard - Welcome Dr. " + user.getName());
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
 
         String[] columnNames = {"Appt ID", "Patient ID", "Date", "Time", "Status", "Notes", "Prescription Code"};
         tableModel = new DefaultTableModel(columnNames, 0);
         appointmentTable = new JTable(tableModel);
+        appointmentTable.setFont(FIELD_FONT);
+        appointmentTable.setRowHeight(25);
+        appointmentTable.getTableHeader().setFont(LABEL_FONT);
         add(new JScrollPane(appointmentTable), BorderLayout.CENTER);
 
         add(createFormPanel(), BorderLayout.SOUTH);
@@ -56,29 +63,36 @@ public class DoctorPanel extends JPanel {
     }
 
     private JPanel createFormPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
         panel.setBorder(BorderFactory.createTitledBorder("Manage Appointment"));
 
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.WEST;
 
         apptIdField.setEditable(false);
         String[] statuses = {"scheduled", "completed", "canceled"};
         statusComboBox = new JComboBox<>(statuses);
 
-        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(new JLabel("Appointment ID:"), gbc);
+        // Apply fonts
+        apptIdField.setFont(FIELD_FONT);
+        statusComboBox.setFont(FIELD_FONT);
+        notesArea.setFont(FIELD_FONT);
+        prescriptionField.setFont(FIELD_FONT);
+
+        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(new JLabel("Appointment ID:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; formPanel.add(apptIdField, gbc);
-        gbc.gridx = 2; formPanel.add(new JLabel("Status:"), gbc);
+        gbc.gridx = 2; formPanel.add(new JLabel("Status:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 3; formPanel.add(statusComboBox, gbc);
-        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(new JLabel("Prescription Code:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(new JLabel("Prescription Code:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; formPanel.add(prescriptionField, gbc);
-        gbc.gridx = 0; gbc.gridy = 2; formPanel.add(new JLabel("Notes:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2; formPanel.add(new JLabel("Notes:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; gbc.gridwidth = 3; gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(new JScrollPane(notesArea), gbc);
 
         JButton updateButton = new JButton("Update Appointment");
+        updateButton.setFont(LABEL_FONT);
         updateButton.addActionListener(e -> updateAppointment());
 
         panel.add(formPanel, BorderLayout.CENTER);

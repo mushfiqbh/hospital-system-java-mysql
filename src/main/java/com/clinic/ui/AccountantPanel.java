@@ -13,18 +13,18 @@ public class AccountantPanel extends JPanel {
     private BillingDao billingDao;
     private JTable billingTable;
     private DefaultTableModel tableModel;
-
-    // Form fields
     private JTextField billIdField = new JTextField(5);
     private JComboBox<String> statusComboBox;
     private JTextField methodField = new JTextField(15);
 
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 14);
+    private static final Font FIELD_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+
     public AccountantPanel() {
         billingDao = new BillingDao();
         setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // Center: Billing Table
         String[] columnNames = {"Bill ID", "Patient Name", "Doctor Name", "Amount", "Payment Status", "Payment Method"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -33,10 +33,12 @@ public class AccountantPanel extends JPanel {
             }
         };
         billingTable = new JTable(tableModel);
+        billingTable.setFont(FIELD_FONT);
+        billingTable.setRowHeight(25);
+        billingTable.getTableHeader().setFont(LABEL_FONT);
         add(new JScrollPane(billingTable), BorderLayout.CENTER);
 
-        // South: Form and Buttons
-        JPanel southPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel southPanel = new JPanel(new BorderLayout(15, 15));
         southPanel.add(createFormPanel(), BorderLayout.CENTER);
         southPanel.add(createButtonPanel(), BorderLayout.EAST);
         add(southPanel, BorderLayout.SOUTH);
@@ -51,32 +53,37 @@ public class AccountantPanel extends JPanel {
     }
 
     private JPanel createFormPanel() {
-        JPanel formPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel formPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         formPanel.setBorder(BorderFactory.createTitledBorder("Update Bill"));
 
         billIdField.setEditable(false);
-        formPanel.add(new JLabel("Bill ID:"));
-        formPanel.add(billIdField);
+        billIdField.setFont(FIELD_FONT);
 
         String[] statuses = {"unpaid", "paid", "partial"};
         statusComboBox = new JComboBox<>(statuses);
-        formPanel.add(new JLabel("Payment Status:"));
+        statusComboBox.setFont(FIELD_FONT);
+
+        methodField.setFont(FIELD_FONT);
+
+        formPanel.add(new JLabel("Bill ID:"){{setFont(LABEL_FONT);}});
+        formPanel.add(billIdField);
+        formPanel.add(new JLabel("Payment Status:"){{setFont(LABEL_FONT);}});
         formPanel.add(statusComboBox);
-
-        formPanel.add(new JLabel("Payment Method:"));
+        formPanel.add(new JLabel("Payment Method:"){{setFont(LABEL_FONT);}});
         formPanel.add(methodField);
-
         return formPanel;
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
         JButton updateButton = new JButton("Update Bill");
         JButton clearButton = new JButton("Clear Selection");
 
+        updateButton.setFont(LABEL_FONT);
+        clearButton.setFont(LABEL_FONT);
+
         updateButton.addActionListener(e -> updateBill());
         clearButton.addActionListener(e -> clearForm());
-
         buttonPanel.add(updateButton);
         buttonPanel.add(clearButton);
         return buttonPanel;
@@ -100,7 +107,6 @@ public class AccountantPanel extends JPanel {
     private void populateFormFromSelectedRow() {
         int selectedRow = billingTable.getSelectedRow();
         if (selectedRow < 0) return;
-
         billIdField.setText(tableModel.getValueAt(selectedRow, 0).toString());
         statusComboBox.setSelectedItem(tableModel.getValueAt(selectedRow, 4).toString());
         Object method = tableModel.getValueAt(selectedRow, 5);
@@ -112,11 +118,9 @@ public class AccountantPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Please select a bill from the table to update.", "Selection Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         int billId = Integer.parseInt(billIdField.getText());
         String status = (String) statusComboBox.getSelectedItem();
         String method = methodField.getText();
-
         if (billingDao.updateBill(billId, status, method)) {
             JOptionPane.showMessageDialog(this, "Bill updated successfully!");
             refreshBillingTable();

@@ -16,29 +16,32 @@ public class AdminPanel extends JPanel {
     private DoctorDao doctorDao;
     private JTable userTable;
     private DefaultTableModel tableModel;
-
-    // Form fields
     private JTextField userIdField, usernameField, nameField, contactField;
     private JPasswordField passwordField;
     private JComboBox<String> roleComboBox;
-    // Doctor specific fields
     private JLabel specLabel, feeLabel, availLabel;
     private JTextField specField, feeField, availField;
+
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 14);
+    private static final Font FIELD_FONT = new Font("Segoe UI", Font.PLAIN, 14);
 
     public AdminPanel() {
         userDao = new UserDao();
         doctorDao = new DoctorDao();
         setLayout(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
         String[] columnNames = {"ID", "Username", "Role", "Name", "Contact"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
         userTable = new JTable(tableModel);
+        userTable.setFont(FIELD_FONT);
+        userTable.setRowHeight(25);
+        userTable.getTableHeader().setFont(LABEL_FONT);
         add(new JScrollPane(userTable), BorderLayout.CENTER);
 
-        JPanel southPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel southPanel = new JPanel(new BorderLayout(15, 15));
         southPanel.add(createFormPanel(), BorderLayout.CENTER);
         southPanel.add(createButtonPanel(), BorderLayout.EAST);
         add(southPanel, BorderLayout.SOUTH);
@@ -56,10 +59,9 @@ public class AdminPanel extends JPanel {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createTitledBorder("User Details"));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Init components
         userIdField = new JTextField(5);
         usernameField = new JTextField(15);
         passwordField = new JPasswordField(15);
@@ -67,7 +69,6 @@ public class AdminPanel extends JPanel {
         contactField = new JTextField(15);
         String[] roles = {"admin", "doctor", "receptionist", "accountant"};
         roleComboBox = new JComboBox<>(roles);
-
         specField = new JTextField(15);
         feeField = new JTextField(15);
         availField = new JTextField(15);
@@ -75,36 +76,46 @@ public class AdminPanel extends JPanel {
         feeLabel = new JLabel("Consultation Fee:");
         availLabel = new JLabel("Availability:");
 
+        // Apply fonts
+        userIdField.setFont(FIELD_FONT);
+        usernameField.setFont(FIELD_FONT);
+        passwordField.setFont(FIELD_FONT);
+        nameField.setFont(FIELD_FONT);
+        contactField.setFont(FIELD_FONT);
+        roleComboBox.setFont(FIELD_FONT);
+        specField.setFont(FIELD_FONT);
+        feeField.setFont(FIELD_FONT);
+        availField.setFont(FIELD_FONT);
+        specLabel.setFont(LABEL_FONT);
+        feeLabel.setFont(LABEL_FONT);
+        availLabel.setFont(LABEL_FONT);
+
         // Row 0
-        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(new JLabel("User ID:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 0; formPanel.add(new JLabel("User ID:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; userIdField.setEditable(false); formPanel.add(userIdField, gbc);
-        gbc.gridx = 2; formPanel.add(new JLabel("Name:"), gbc);
+        gbc.gridx = 2; formPanel.add(new JLabel("Name:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 3; formPanel.add(nameField, gbc);
-
         // Row 1
-        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1; formPanel.add(new JLabel("Username:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; formPanel.add(usernameField, gbc);
-        gbc.gridx = 2; formPanel.add(new JLabel("Contact:"), gbc);
+        gbc.gridx = 2; formPanel.add(new JLabel("Contact:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 3; formPanel.add(contactField, gbc);
-
         // Row 2
-        gbc.gridx = 0; gbc.gridy = 2; formPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 2; formPanel.add(new JLabel("Password:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 1; formPanel.add(passwordField, gbc);
-        gbc.gridx = 2; formPanel.add(new JLabel("Role:"), gbc);
+        gbc.gridx = 2; formPanel.add(new JLabel("Role:"){{setFont(LABEL_FONT);}}, gbc);
         gbc.gridx = 3; formPanel.add(roleComboBox, gbc);
-
         // Row 3 (Doctor specific)
         gbc.gridx = 0; gbc.gridy = 3; formPanel.add(specLabel, gbc);
         gbc.gridx = 1; formPanel.add(specField, gbc);
         gbc.gridx = 2; formPanel.add(feeLabel, gbc);
         gbc.gridx = 3; formPanel.add(feeField, gbc);
-
         // Row 4 (Doctor specific)
         gbc.gridx = 0; gbc.gridy = 4; formPanel.add(availLabel, gbc);
         gbc.gridx = 1; gbc.gridwidth = 3; formPanel.add(availField, gbc);
 
         roleComboBox.addActionListener(e -> toggleDoctorFields());
-        toggleDoctorFields(); // Initial state
+        toggleDoctorFields();
 
         return formPanel;
     }
@@ -120,11 +131,17 @@ public class AdminPanel extends JPanel {
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10));
         JButton addButton = new JButton("Add User");
         JButton updateButton = new JButton("Update User");
         JButton deleteButton = new JButton("Delete User");
         JButton clearButton = new JButton("Clear Form");
+
+        addButton.setFont(LABEL_FONT);
+        updateButton.setFont(LABEL_FONT);
+        deleteButton.setFont(LABEL_FONT);
+        clearButton.setFont(LABEL_FONT);
+
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
@@ -163,7 +180,6 @@ public class AdminPanel extends JPanel {
         int newUserId = userDao.addUser(user);
 
         if (newUserId != -1) {
-            // If the user is a doctor, also create a doctor record
             if ("doctor".equals(user.getRole())) {
                 try {
                     double fee = Double.parseDouble(feeField.getText());
@@ -171,7 +187,6 @@ public class AdminPanel extends JPanel {
                     doctorDao.addDoctor(doctor);
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Invalid consultation fee. Please enter a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
-                    // Consider deleting the created user for consistency
                     userDao.deleteUser(newUserId);
                     return;
                 }

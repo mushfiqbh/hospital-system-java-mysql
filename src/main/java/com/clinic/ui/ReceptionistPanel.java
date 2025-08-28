@@ -33,14 +33,18 @@ public class ReceptionistPanel extends JPanel {
     private JComboBox<String> apptDoctorComboBox;
     private JTextField apptDateField, apptTimeField;
 
+    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 14);
+    private static final Font FIELD_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+
     public ReceptionistPanel() {
         patientDao = new PatientDao();
         doctorDao = new DoctorDao();
         appointmentDao = new AppointmentDao();
         billingDao = new BillingDao();
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(new EmptyBorder(15, 15, 15, 15));
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(LABEL_FONT);
         tabbedPane.addTab("Patient Management", createPatientPanel());
         tabbedPane.addTab("Appointment Scheduling", createAppointmentPanel());
         add(tabbedPane, BorderLayout.CENTER);
@@ -51,9 +55,12 @@ public class ReceptionistPanel extends JPanel {
         String[] columnNames = {"ID", "Name", "Gender", "DOB", "Contact", "Address"};
         patientTableModel = new DefaultTableModel(columnNames, 0);
         patientTable = new JTable(patientTableModel);
+        patientTable.setFont(FIELD_FONT);
+        patientTable.setRowHeight(25);
+        patientTable.getTableHeader().setFont(LABEL_FONT);
         panel.add(new JScrollPane(patientTable), BorderLayout.CENTER);
 
-        JPanel southPanel = new JPanel(new BorderLayout());
+        JPanel southPanel = new JPanel(new BorderLayout(15, 15));
         southPanel.add(createPatientFormPanel(), BorderLayout.CENTER);
         southPanel.add(createPatientButtonPanel(), BorderLayout.EAST);
         panel.add(southPanel, BorderLayout.SOUTH);
@@ -69,7 +76,7 @@ public class ReceptionistPanel extends JPanel {
     }
 
     private JPanel createPatientFormPanel() {
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createTitledBorder("Patient Details"));
 
         patientIdField = new JTextField();
@@ -80,28 +87,41 @@ public class ReceptionistPanel extends JPanel {
         patientContactField = new JTextField();
         patientAddressField = new JTextField();
 
-        formPanel.add(new JLabel("Patient ID:"));
+        // Apply fonts
+        patientIdField.setFont(FIELD_FONT);
+        patientNameField.setFont(FIELD_FONT);
+        patientGenderCombo.setFont(FIELD_FONT);
+        patientDobField.setFont(FIELD_FONT);
+        patientContactField.setFont(FIELD_FONT);
+        patientAddressField.setFont(FIELD_FONT);
+
+        formPanel.add(new JLabel("Patient ID:"){{setFont(LABEL_FONT);}});
         formPanel.add(patientIdField);
-        formPanel.add(new JLabel("Name:"));
+        formPanel.add(new JLabel("Name:"){{setFont(LABEL_FONT);}});
         formPanel.add(patientNameField);
-        formPanel.add(new JLabel("Gender:"));
+        formPanel.add(new JLabel("Gender:"){{setFont(LABEL_FONT);}});
         formPanel.add(patientGenderCombo);
-        formPanel.add(new JLabel("Date of Birth (YYYY-MM-DD):"));
+        formPanel.add(new JLabel("Date of Birth (YYYY-MM-DD):"){{setFont(LABEL_FONT);}});
         formPanel.add(patientDobField);
-        formPanel.add(new JLabel("Contact:"));
+        formPanel.add(new JLabel("Contact:"){{setFont(LABEL_FONT);}});
         formPanel.add(patientContactField);
-        formPanel.add(new JLabel("Address:"));
+        formPanel.add(new JLabel("Address:"){{setFont(LABEL_FONT);}});
         formPanel.add(patientAddressField);
 
         return formPanel;
     }
 
     private JPanel createPatientButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 10, 10));
         JButton addButton = new JButton("Add Patient");
         JButton updateButton = new JButton("Update Patient");
         JButton deleteButton = new JButton("Delete Patient");
         JButton clearButton = new JButton("Clear Form");
+
+        addButton.setFont(LABEL_FONT);
+        updateButton.setFont(LABEL_FONT);
+        deleteButton.setFont(LABEL_FONT);
+        clearButton.setFont(LABEL_FONT);
 
         addButton.addActionListener(e -> addPatient());
         updateButton.addActionListener(e -> updatePatient());
@@ -117,24 +137,37 @@ public class ReceptionistPanel extends JPanel {
 
     private JPanel createAppointmentPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createTitledBorder("Create New Appointment"));
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createTitledBorder("Create New Appointment"));
+
         apptPatientComboBox = new JComboBox<>();
         apptDoctorComboBox = new JComboBox<>();
         apptDateField = new JTextField(LocalDate.now().toString());
         apptTimeField = new JTextField(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        formPanel.add(new JLabel("Select Patient:"));
+
+        apptPatientComboBox.setFont(FIELD_FONT);
+        apptDoctorComboBox.setFont(FIELD_FONT);
+        apptDateField.setFont(FIELD_FONT);
+        apptTimeField.setFont(FIELD_FONT);
+
+        formPanel.add(new JLabel("Select Patient:"){{setFont(LABEL_FONT);}});
         formPanel.add(apptPatientComboBox);
-        formPanel.add(new JLabel("Select Doctor:"));
+        formPanel.add(new JLabel("Select Doctor:"){{setFont(LABEL_FONT);}});
         formPanel.add(apptDoctorComboBox);
-        formPanel.add(new JLabel("Appointment Date (YYYY-MM-DD):"));
+        formPanel.add(new JLabel("Appointment Date (YYYY-MM-DD):"){{setFont(LABEL_FONT);}});
         formPanel.add(apptDateField);
-        formPanel.add(new JLabel("Appointment Time (HH:MM):"));
+        formPanel.add(new JLabel("Appointment Time (HH:MM):"){{setFont(LABEL_FONT);}});
         formPanel.add(apptTimeField);
+
         JButton createAppointmentButton = new JButton("Create Appointment & Generate Bill");
+        createAppointmentButton.setFont(LABEL_FONT);
         createAppointmentButton.addActionListener(e -> createAppointment());
+
         panel.add(formPanel, BorderLayout.NORTH);
         panel.add(createAppointmentButton, BorderLayout.SOUTH);
+
         refreshAppointmentFormComboBoxes();
         return panel;
     }

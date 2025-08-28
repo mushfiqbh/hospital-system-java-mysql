@@ -96,12 +96,12 @@ mvn -version
 
 1. **Using Maven**
    ```bash
-   mvn exec:java -Dexec.mainClass="com.clinic.Main"
+   mvn exec:java -Dexec.mainClass="com.clinic.main.Main"
    ```
 
 2. **Using Java directly**
    ```bash
-   java -cp target/classes com.clinic.Main
+   java -cp target/classes com.clinic.main.Main
    ```
 
 ### First Time Setup
